@@ -18,16 +18,16 @@ El código vive en `src/`, organizado en:
 - `assets/`: imágenes y fuentes locales
 - `components/`: componentes reutilizables de UI
 - `screens/`: pantallas principales de la app
-- `theme/`: paleta de colores y estilos globales
+- `constants/`: paleta de colores y estilos globales
 
 Cada carpeta tiene un alias de importación configurado en `tsconfig.json`:
 
 ```ts
 import { Typography } from '@components/Typography';
-import { colors } from '@theme/colors';
+import { colors } from '@constants/colors';
 ```
 
-Alias disponibles: `@assets`, `@components`, `@screens`, `@theme`.
+Alias disponibles: `@assets`, `@components`, `@screens`, `@constants`.
 
 ## Cómo ejecutarlo localmente
 

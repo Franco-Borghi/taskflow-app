@@ -1,11 +1,5 @@
-import { Greetings } from '@components/Greetings';
-import { View } from 'react-native';
-import { styles } from './App.styles';
+import { ProfileScreen } from '@screens/ProfileScreen/ProfileScreen';
 
 export default function App() {
-	return (
-		<View style={styles.container}>
-			<Greetings />
-		</View>
-	);
+	return <ProfileScreen />;
 }

@@ -1,6 +1,6 @@
 import { Text, TextStyle } from 'react-native';
 
-import { colors } from '@theme/colors';
+import { colors } from '@constants/colors';
 
 import { styles } from './Typography.style';
 

@@ -2,7 +2,6 @@ const palette = {
 	black: '#0A0A0A',
 	gray700: '#404040',
 	gray500: '#737373',
-	gray200: '#E5E5E5',
 	white: '#FFFFFF',
 
 	orange900: '#7C2D12',
@@ -15,7 +14,6 @@ const palette = {
 export const colors = {
 	background: palette.orange100,
 	surface: palette.white,
-	border: palette.gray200,
 
 	text: palette.black,
 	textSecondary: palette.gray700,
