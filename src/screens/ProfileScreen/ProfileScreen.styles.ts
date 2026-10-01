@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
 		flex: 1,
 	},
 	scrollContent: {
-		gap: 8,
+		gap: paddings.small,
 		padding: paddings.medium,
 	},
 });
