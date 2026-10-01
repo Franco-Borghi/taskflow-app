@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
 		padding: paddings.large,
 		borderRadius: borderRadius.small,
 		flexDirection: 'row',
-		gap: 16,
+		gap: paddings.medium,
 		borderWidth: 1,
 		borderColor: colors.primaryMuted,
 		boxShadow: boxShadows.primary,
