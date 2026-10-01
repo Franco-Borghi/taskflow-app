@@ -1,11 +1,12 @@
-import { Greetings } from '@components/Greetings';
-import { View } from 'react-native';
-import { styles } from './App.styles';
+// import { HomeScreen } from '@screens/HomeScreen/HomeScreen';
+import { ProfileScreen } from '@screens/ProfileScreen/ProfileScreen';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App() {
 	return (
-		<View style={styles.container}>
-			<Greetings />
-		</View>
+		<SafeAreaProvider>
+			<ProfileScreen />
+			{/* <HomeScreen /> */}
+		</SafeAreaProvider>
 	);
 }

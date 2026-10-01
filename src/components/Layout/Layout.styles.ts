@@ -1,12 +1,14 @@
-import { colors } from '@theme/colors';
+import { colors } from '@constants/colors';
+import { paddings } from '@constants/paddings';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		padding: 16,
-		justifyContent: 'center',
-		alignItems: 'center',
 		backgroundColor: colors.background,
+	},
+	content: {
+		flex: 1,
+		gap: paddings.medium,
 	},
 });
