@@ -1,12 +1,14 @@
+import { colors } from '@constants/colors';
 import { paddings } from '@constants/paddings';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-	scroll: {
+	container: {
 		flex: 1,
+		backgroundColor: colors.background,
 	},
-	scrollContent: {
-		gap: 8,
-		padding: paddings.medium,
+	content: {
+		flex: 1,
+		gap: paddings.medium,
 	},
 });

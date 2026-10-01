@@ -1,5 +1,5 @@
-import { Typography } from '@components/Typography';
-import { FlatList, View } from 'react-native';
+import { Layout } from '@components/Layout';
+import { FlatList } from 'react-native';
 import { styles } from './ProfileScreen.styles';
 import { ComponentProps } from 'react';
 import { ProfileCard } from '@components/ProfileCard';
@@ -23,9 +23,7 @@ const cardData: ProfileCardData[] = [
 
 export const ProfileScreen = () => {
 	return (
-		<View style={styles.container}>
-			<Typography text="Profile" align="center" type="h1" color="primary" />
-
+		<Layout title="Profile">
 			<FlatList
 				data={cardData}
 				keyExtractor={(item) => item.id}
@@ -33,6 +31,6 @@ export const ProfileScreen = () => {
 				style={styles.scroll}
 				contentContainerStyle={styles.scrollContent}
 			/>
-		</View>
+		</Layout>
 	);
 };
