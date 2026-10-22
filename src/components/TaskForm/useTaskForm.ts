@@ -93,7 +93,9 @@ export const useTaskForm = (onSave: (task: Task) => void) => {
 		console.log('New task:', task);
 		onSave(task);
 		resetForm();
-		Alert.alert('Éxito', 'Tarea capturada localmente');
+		// Written in English instead of "Éxito" / "Tarea capturada localmente" (as the Module 3 brief asks)
+		// to match the rest of the app.
+		Alert.alert('Success', 'Task saved locally');
 	};
 
 	return {

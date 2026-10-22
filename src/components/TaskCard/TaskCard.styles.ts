@@ -22,10 +22,4 @@ export const styles = StyleSheet.create({
 	title: {
 		flex: 1,
 	},
-	badge: {
-		paddingHorizontal: paddings.small,
-		paddingVertical: 2,
-		backgroundColor: colors.background,
-		borderRadius: borderRadius.rounded,
-	},
 });
