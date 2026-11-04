@@ -6,8 +6,8 @@ import { Typography } from '@components/Typography';
 import { TasksStackParamList } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useAppSelector } from '@store/hooks';
-import { selectFilteredTasks } from '@store/taskSlice';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { selectFilteredTasks, toggleTaskStatus } from '@store/taskSlice';
 import { FlatList, View } from 'react-native';
 import { styles } from './TaskListScreen.styles';
 
@@ -20,13 +20,18 @@ const user = {
 export const TaskListScreen = () => {
 	const navigation = useNavigation<NativeStackNavigationProp<TasksStackParamList, 'TaskList'>>();
 	const tasks = useAppSelector(selectFilteredTasks);
+	const dispatch = useAppDispatch();
 
 	return (
 		<FlatList
 			data={tasks}
 			keyExtractor={(task) => task.id}
 			renderItem={({ item }) => (
-				<TaskCard {...item} onPress={() => navigation.navigate('TaskDetail', { task: item })} />
+				<TaskCard
+					{...item}
+					onPress={() => navigation.navigate('TaskDetail', { taskId: item.id })}
+					onToggle={() => dispatch(toggleTaskStatus(item.id))}
+				/>
 			)}
 			ListHeaderComponent={
 				<View style={styles.header}>
@@ -38,8 +43,6 @@ export const TaskListScreen = () => {
 				</View>
 			}
 			ListEmptyComponent={
-				// Written in English instead of "¡No tienes tareas pendientes! Empieza por crear una arriba."
-				// (as the brief asks) to match the rest of the app.
 				<EmptyState
 					icon="📝"
 					title="You have no pending tasks!"

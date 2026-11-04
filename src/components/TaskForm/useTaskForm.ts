@@ -15,8 +15,6 @@ type TaskFormField = keyof TaskFormValues;
 
 type TaskFormErrors = Partial<Record<TaskFormField, string>>;
 
-// Each validator returns an error message, or undefined when the value is valid.
-// Values are trimmed so a field with only spaces counts as empty.
 const validateTitle = (title: string) => {
 	const trimmedTitle = title.trim();
 
@@ -59,7 +57,6 @@ export const useTaskForm = (onSave: (input: TaskInput) => void) => {
 		setErrors({});
 	};
 
-	// Editing a field clears its error; the field is validated again when it loses focus.
 	const handleChange = (field: TaskFormField, text: string) => {
 		if (field === 'title') {
 			setTitle(text);
@@ -75,7 +72,6 @@ export const useTaskForm = (onSave: (input: TaskInput) => void) => {
 	};
 
 	const handleAddTask = () => {
-		// Submitting validates every field, including the ones the user never focused.
 		const validationErrors = validateForm({ title, description });
 		setErrors(validationErrors);
 
@@ -89,8 +85,6 @@ export const useTaskForm = (onSave: (input: TaskInput) => void) => {
 			category,
 		});
 		resetForm();
-		// Written in English instead of "Éxito" / "Tarea capturada localmente" (as the Module 3 brief asks)
-		// to match the rest of the app.
 		Alert.alert('Success', 'Task saved locally');
 	};
 

@@ -65,14 +65,27 @@ const taskSlice = createSlice({
 				},
 			}),
 		},
+		toggleTaskStatus: (state, action: PayloadAction<string>) => {
+			const task = state.items.find((item) => item.id === action.payload);
+
+			if (task) {
+				task.completed = !task.completed;
+			}
+		},
+		deleteTask: (state, action: PayloadAction<string>) => {
+			state.items = state.items.filter((task) => task.id !== action.payload);
+		},
 	},
 });
 
-export const { addTask } = taskSlice.actions;
+export const { addTask, toggleTaskStatus, deleteTask } = taskSlice.actions;
 
 export const tasksReducer = taskSlice.reducer;
 
 export const selectTasks = (state: RootState) => state.tasks.items;
+
+export const selectTaskById = (state: RootState, taskId: string) =>
+	state.tasks.items.find((task) => task.id === taskId);
 
 export const selectTaskFilter = (state: RootState) => state.tasks.filter;
 

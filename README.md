@@ -2,7 +2,10 @@
 
 App mobile de gestión de tareas desarrollada con **React Native** y **Expo** (Managed Workflow), como proyecto final del curso de Desarrollo de Aplicaciones de Coderhouse.
 
-Los textos de la app están en inglés. Donde el enunciado pide un texto puntual en español, hay un comentario en el código que lo indica.
+Los textos de la app están en inglés. Donde el enunciado pedía un texto puntual en español, se usó su equivalente en inglés:
+
+- Estado vacío de la lista (Checkpoint 4): "You have no pending tasks!" / "Start by creating one with the + Add button above." en lugar de "¡No tienes tareas pendientes! Empieza por crear una arriba."
+- `Alert` al guardar una tarea (Checkpoint 3): "Success" / "Task saved locally" en lugar de "Éxito" / "Tarea capturada localmente".
 
 ## Checkpoints
 
