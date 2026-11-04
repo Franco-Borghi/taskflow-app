@@ -10,44 +10,89 @@ Los textos de la app están en inglés. Donde el enunciado pide un texto puntual
 - **Checkpoint 2: Pantallas iniciales y tarjeta de perfil.** Pantallas `HomeScreen` y `ProfileScreen`, componente reutilizable `ProfileCard` y sistema de estilos centralizado.
 - **Checkpoint 3: Formulario de creación de tareas.** Botón "+ Add" en la `HomeScreen` que abre un modal con un formulario controlado, validaciones y feedback visual. Las tareas guardadas se muestran en la lista de la Home.
 - **Checkpoint 4: Lista de tareas con detalle.** Estado vacío con el componente `EmptyState`, y pantalla `TaskDetailScreen` que se abre al tocar una tarea, con botones para volver a la lista y para borrar la tarea.
+- **Checkpoint 5: Navegación.** React Navigation con un `Tab.Navigator` (Home y Profile) y un `Stack.Navigator` anidado en Home para el flujo de tareas (`TaskList`, `TaskDetail` y `TaskForm`). La tarea seleccionada viaja por `route.params` y el formulario vuelve a la lista solo al guardar.
+
+## Navegación
+
+La navegación usa React Navigation 7. Toda la configuración vive en `src/navigation/`:
+
+- `AppNavigator.tsx`: el `NavigationContainer`, con un tema armado con la paleta de la app, y el `Tab.Navigator` raíz.
+- `TasksStackNavigator.tsx`: el `Stack.Navigator` del flujo de tareas.
+- `types.ts`: las rutas de cada navegador y sus parámetros.
+- `headerOptions.ts`: el estilo del header que comparten las pestañas y el stack (fondo naranja y título blanco centrado).
+
+### Estructura
+
+```
+NavigationContainer
+└─ Tab.Navigator
+   ├─ Home ──→ Stack.Navigator
+   │            ├─ TaskList     (ruta inicial)
+   │            ├─ TaskDetail   { task }
+   │            └─ TaskForm
+   └─ Profile ─→ ProfileScreen
+```
+
+- **`Tab.Navigator` (raíz):** las dos secciones de la app, al mismo nivel. Cada pestaña tiene un ícono de `Ionicons` (`@expo/vector-icons`), relleno cuando está activa. Las pestañas conservan su estado: si estás en el detalle de una tarea, vas a Profile y volvés, seguís en el detalle.
+- **`Stack.Navigator` (dentro de Home):** el flujo de tareas. Cada pantalla se apila sobre la lista y "atrás" la saca, así que la lista vuelve a verse tal como estaba. El stack se encarga del header con el título de cada pantalla, de la flecha atrás y del botón atrás de Android.
+- La pestaña Home oculta su propio header (`headerShown: false`) para que no se vean dos. El que se ve es el del stack, que cambia el título según la pantalla y muestra la flecha atrás.
+- Títulos del header: "Home" (`TaskList`), "Task detail", "New task" y "Profile".
+
+### Flujo
+
+| Acción                                     | Llamada                                                             |
+| ------------------------------------------ | ------------------------------------------------------------------- |
+| Tocar una tarea en la lista                | `navigation.navigate('TaskDetail', { task })`                       |
+| "+ Add" en la lista                        | `navigation.navigate('TaskForm')`                                   |
+| "Save" en el formulario                    | `navigation.navigate('TaskList', { newTask }, { pop: true })`       |
+| "Cancel" en el formulario                  | `navigation.goBack()`                                               |
+| "Delete task" en el detalle                | `navigation.navigate('TaskList', { deletedTaskId }, { pop: true })` |
+| Flecha del header o botón atrás de Android | La maneja el stack                                                  |
+
+Las pantallas usan los hooks `useNavigation` y `useRoute`, tipados con `TasksStackParamList`.
+
+### Decisiones
+
+- **Las tareas viajan por parámetros.** Todavía no hay estado global (llega con Redux en el Módulo 6), así que la lista es la dueña de las tareas y las otras pantallas se comunican con ella por `route.params`:
+  - El detalle recibe la tarea entera y no solo el ID, porque sin estado compartido no tendría de dónde sacar el resto de los datos. El ID viaja dentro de la tarea.
+  - El formulario devuelve la tarea nueva en `newTask`, y el detalle devuelve el ID de la tarea borrada en `deletedTaskId`.
+- **`createdAt` es un string ISO.** React Navigation avisa cuando hay valores no serializables en los parámetros, y un `Date` no se puede serializar. Por eso la fecha se guarda como string, y el detalle la convierte a `Date` solo para mostrarla.
+- **`navigate` con `{ pop: true }`.** En React Navigation 7, `navigate('TaskList')` ya no vuelve a una pantalla que está más abajo en el stack: apila una nueva. Sin la opción `pop`, después de guardar quedarían dos listas apiladas y la flecha atrás volvería al formulario. Con `{ pop: true }`, vuelve a la `TaskList` que ya existe y le reemplaza los parámetros.
+- **Cómo aplica la lista `newTask` y `deletedTaskId`.** La lista guarda en un estado el último valor que ya procesó (`handledNewTask` y `handledDeletedTaskId`). Cuando llega un parámetro distinto, aplica el cambio una sola vez, durante el render. No uso `useEffect` porque la regla `react-hooks/set-state-in-effect` lo marca: actualizar el estado en un efecto, como reacción a un cambio de props, genera un render de más. Es el patrón que recomienda React en [Adjusting some state when a prop changes](https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
+- **El formulario es una pantalla del stack, no un modal.** Tiene el header con "New task" y la flecha atrás, y la barra de pestañas sigue visible.
 
 ## Pantallas
 
-Todas las pantallas se visualizan correctamente en Expo Go.
+Todas las pantallas están en `src/screens/` y cada una es una ruta de un navegador. Se visualizan correctamente en Expo Go.
 
-### HomeScreen
+### TaskListScreen
 
-Es la pantalla que se muestra al abrir la app (`App.tsx`). Muestra mi `ProfileCard` y la sección "My tasks" con la lista de tareas.
+Es la ruta inicial del stack de la pestaña Home, así que es lo primero que se ve al abrir la app. Muestra mi `ProfileCard` y la sección "My tasks" con la lista de tareas.
 
 - La lista es un `FlatList` que scrollea toda la pantalla: la `ProfileCard` y el título "My tasks" van en el `ListHeaderComponent`.
 - Cuando no hay tareas, el `ListEmptyComponent` muestra el `EmptyState`, que invita a crear la primera tarea. Uso `ListEmptyComponent` en vez de un ternario sobre `tasks.length` porque la `ProfileCard` y el botón "+ Add" están en el header de la lista: con un ternario desaparecerían junto con la lista y no habría forma de crear la primera tarea.
-- El botón "+ Add" abre el `AddTaskModal`. Al guardar, la tarea se agrega al principio de la lista.
-- Al tocar una tarea se abre su detalle (ver `TaskDetailScreen`).
-- Por ahora las tareas viven en un estado local (`useState`) de la `HomeScreen`, así que se pierden al cerrar la app o cambiar de pantalla.
+- El botón "+ Add" abre la `TaskFormScreen`. Al guardar, la tarea se agrega al principio de la lista.
+- Al tocar una tarea se abre su detalle (`TaskDetailScreen`).
+- Las tareas viven en un estado local (`useState`) de la `TaskListScreen`. Como la pestaña no se desmonta, se mantienen al ir a Profile y volver, pero se pierden al cerrar la app.
 
 ### TaskDetailScreen
 
-Muestra el detalle de una tarea: título, categoría, descripción completa y fecha de creación.
+Muestra el detalle de la tarea que recibe en `route.params.task`: título, categoría, descripción completa y fecha de creación.
 
-- Todavía no hay React Navigation, así que la navegación es simulada: la `HomeScreen` guarda la tarea tocada en el estado `selectedTask` y, mientras tenga un valor, renderiza la `TaskDetailScreen` en lugar de la lista. El título del header cambia a "Task detail".
-- "← Back" y el botón atrás de Android (con `BackHandler`) hacen `setSelectedTask(null)` y vuelven a la lista. Como la `HomeScreen` no se desmonta, las tareas no se pierden.
-- "Delete task" pide confirmación con un `Alert`, borra la tarea y vuelve a la lista. Si era la última, aparece el estado vacío.
-- En el Módulo 5 el estado `selectedTask` se va a reemplazar por un `Stack.Navigator` de React Navigation.
+- Para volver a la lista se usa la flecha del header o el botón atrás de Android.
+- "Delete task" pide confirmación con un `Alert` y vuelve a la lista con el `deletedTaskId`. Si era la última tarea, aparece el estado vacío.
+
+### TaskFormScreen
+
+Muestra el `TaskForm` dentro de una tarjeta.
+
+- "Save" valida el formulario, vuelve a la lista con la tarea nueva en `newTask` y muestra el `Alert` "Success / Task saved locally".
+- "Cancel" vuelve a la lista sin guardar.
+- Usa `KeyboardAvoidingView` para que el formulario quede por encima del teclado. Como `KeyboardAvoidingView` calcula su posición sin contar el header, le paso la altura del header en `keyboardVerticalOffset`, que se obtiene con `useHeaderHeight` de `@react-navigation/elements`.
 
 ### ProfileScreen
 
-Renderiza una lista de `ProfileCard` con datos de prueba (mi perfil y el de un equipo ficticio) usando `FlatList`. Cada tarjeta recibe datos distintos, lo que demuestra que el componente es reutilizable.
-
-Hasta tener la navegación, para verla hay que cambiar la pantalla que renderiza `App.tsx`:
-
-```tsx
-import { ProfileScreen } from '@screens/ProfileScreen/ProfileScreen';
-
-// ...
-<SafeAreaProvider>
-	<ProfileScreen />
-</SafeAreaProvider>;
-```
+Es la pestaña Profile. Renderiza una lista de `ProfileCard` con datos de prueba (mi perfil y el de un equipo ficticio) usando `FlatList`. Cada tarjeta recibe datos distintos, lo que demuestra que el componente es reutilizable.
 
 ## Formulario de tareas
 
@@ -67,22 +112,19 @@ El formulario (`TaskForm`) captura título, descripción y categoría. Toda su l
   - El botón "Save" se deshabilita mientras haya errores.
 - **Envío simulado (`handleAddTask`):** primero valida todos los campos con `validateForm`. Si los datos son válidos:
   1. Arma la tarea (`{ id, title, description, category, createdAt }`) y la imprime en consola.
-  2. La manda a la `HomeScreen`, que la agrega a la lista y cierra el modal.
+  2. Se la pasa a `TaskFormScreen` con `onSave`, y la pantalla vuelve a la lista con la tarea en los parámetros.
   3. Limpia los campos con `resetForm`, así el formulario vuelve a su estado inicial.
   4. Muestra el `Alert` "Success / Task saved locally".
 - **UX mobile:**
   - El título usa `autoCapitalize="sentences"` y `returnKeyType="next"`, que pasa el foco a la descripción.
   - La descripción es multilínea.
-  - El modal usa `KeyboardAvoidingView` para que la tarjeta suba por encima del teclado.
+  - La pantalla usa `KeyboardAvoidingView` para que el formulario quede por encima del teclado.
 
 ## Componentes
 
 - `ProfileCard`: tarjeta de perfil reutilizable. Recibe `name`, `role` e `image` por props, sin datos fijos adentro. `image` acepta tanto una imagen local (`require('@assets/images/...')`) como una remota (`{ uri: 'https://...' }`).
-- `Layout`: estructura común de todas las pantallas, con el `Header` arriba, el contenido en el medio y el `Nav` abajo.
-- `Header` y `Nav`: barras superior e inferior. Usan `react-native-safe-area-context` para no quedar debajo de la barra de estado ni de la barra de gestos. El `Nav` aun no tiene los botones de navegación.
 - `Typography`: textos con los tamaños y colores del tema.
-- `AddTaskModal`: modal con una tarjeta centrada que contiene el `TaskForm`. Se cierra con "Cancel", con "Save" o con el botón atrás de Android.
-- `TaskForm`: formulario de creación de tareas, con los botones "Cancel" y "Save".
+- `TaskForm`: formulario de creación de tareas, con los botones "Cancel" y "Save". Lo usa la `TaskFormScreen`.
 - `TaskCard`: tarjeta de una tarea en la lista, con título, categoría y descripción. Al tocarla se abre el detalle.
 - `CategoryBadge`: etiqueta con el nombre de la categoría. La usan `TaskCard` y `TaskDetailScreen`.
 - `EmptyState`: mensaje con ícono para cuando una lista está vacía. Recibe `icon`, `title` y `message` por props.
@@ -100,11 +142,15 @@ Todos los estilos usan `StyleSheet.create` en archivos `*.styles.ts` separados d
 - `boxShadows.ts`: sombras
 - `taskCategories.ts`: categorías disponibles para las tareas y la categoría por defecto
 
+El header y la barra de pestañas usan los mismos colores, a través del tema del `NavigationContainer` y de `headerOptions.ts`.
+
 ## Tecnologías
 
 - Expo SDK 57
 - React Native
 - TypeScript
+- React Navigation 7 (`native`, `bottom-tabs`, `native-stack` y `elements`)
+- @expo/vector-icons
 - react-native-safe-area-context
 - ESLint + Prettier
 
@@ -114,7 +160,8 @@ El código vive en `src/`, organizado en:
 
 - `assets/`: imágenes y fuentes locales (`assets/images/`)
 - `components/`: componentes reutilizables de UI
-- `screens/`: pantallas principales de la app
+- `screens/`: pantallas de la app (cada una es una ruta de un navegador)
+- `navigation/`: navegadores, tipos de las rutas y estilo del header
 - `constants/`: constantes de diseño (colores, espaciados, bordes y sombras) y categorías de tareas
 - `entities/`: tipos de las entidades de la app (por ahora, `Task`)
 
@@ -126,7 +173,7 @@ import { colors } from '@constants/colors';
 import { Task } from '@entities/task';
 ```
 
-Alias disponibles: `@assets`, `@components`, `@screens`, `@constants`, `@entities`.
+Alias disponibles: `@assets`, `@components`, `@screens`, `@navigation`, `@constants`, `@entities`.
 
 ## Cómo ejecutarlo localmente
 
