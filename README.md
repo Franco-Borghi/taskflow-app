@@ -34,20 +34,21 @@ NavigationContainer
 ```
 
 - **`Tab.Navigator` (raíz):** las dos secciones de la app, al mismo nivel. Cada pestaña tiene un ícono de `Ionicons` (`@expo/vector-icons`), relleno cuando está activa. Las pestañas conservan su estado: si estás en el detalle de una tarea, vas a Profile y volvés, seguís en el detalle.
-- **`Stack.Navigator` (dentro de Home):** el flujo de tareas. Cada pantalla se apila sobre la lista y "atrás" la saca, así que la lista vuelve a verse tal como estaba. El stack se encarga del header con el título de cada pantalla, de la flecha atrás y del botón atrás de Android.
-- La pestaña Home oculta su propio header (`headerShown: false`) para que no se vean dos. El que se ve es el del stack, que cambia el título según la pantalla y muestra la flecha atrás.
+- **`Stack.Navigator` (dentro de Home):** el flujo de tareas. Cada pantalla se apila sobre la lista y "atrás" la saca, así que la lista vuelve a verse tal como estaba. El stack se encarga del header con el título de cada pantalla, del botón atrás de Android y del gesto de deslizar desde el borde en iOS.
+- La pestaña Home oculta su propio header (`headerShown: false`) para que no se vean dos. El que se ve es el del stack, que cambia el título según la pantalla y muestra el botón atrás (`BackButton`).
 - Títulos del header: "Home" (`TaskList`), "Task detail", "New task" y "Profile".
 
 ### Flujo
 
-| Acción                                     | Llamada                                                             |
-| ------------------------------------------ | ------------------------------------------------------------------- |
-| Tocar una tarea en la lista                | `navigation.navigate('TaskDetail', { task })`                       |
-| "+ Add" en la lista                        | `navigation.navigate('TaskForm')`                                   |
-| "Save" en el formulario                    | `navigation.navigate('TaskList', { newTask }, { pop: true })`       |
-| "Cancel" en el formulario                  | `navigation.goBack()`                                               |
-| "Delete task" en el detalle                | `navigation.navigate('TaskList', { deletedTaskId }, { pop: true })` |
-| Flecha del header o botón atrás de Android | La maneja el stack                                                  |
+| Acción                                                  | Llamada                                                             |
+| ------------------------------------------------------- | ------------------------------------------------------------------- |
+| Tocar una tarea en la lista                             | `navigation.navigate('TaskDetail', { task })`                       |
+| "+ Add" en la lista                                     | `navigation.navigate('TaskForm')`                                   |
+| "Save" en el formulario                                 | `navigation.navigate('TaskList', { newTask }, { pop: true })`       |
+| "Cancel" en el formulario                               | `navigation.goBack()`                                               |
+| "Delete task" en el detalle                             | `navigation.navigate('TaskList', { deletedTaskId }, { pop: true })` |
+| Botón atrás del header (`BackButton`)                   | `navigation.goBack()`                                               |
+| Botón atrás de Android o deslizar desde el borde en iOS | Lo maneja el stack                                                  |
 
 Las pantallas usan los hooks `useNavigation` y `useRoute`, tipados con `TasksStackParamList`.
 
@@ -57,9 +58,10 @@ Las pantallas usan los hooks `useNavigation` y `useRoute`, tipados con `TasksSta
   - El detalle recibe la tarea entera y no solo el ID, porque sin estado compartido no tendría de dónde sacar el resto de los datos. El ID viaja dentro de la tarea.
   - El formulario devuelve la tarea nueva en `newTask`, y el detalle devuelve el ID de la tarea borrada en `deletedTaskId`.
 - **`createdAt` es un string ISO.** React Navigation avisa cuando hay valores no serializables en los parámetros, y un `Date` no se puede serializar. Por eso la fecha se guarda como string, y el detalle la convierte a `Date` solo para mostrarla.
-- **`navigate` con `{ pop: true }`.** En React Navigation 7, `navigate('TaskList')` ya no vuelve a una pantalla que está más abajo en el stack: apila una nueva. Sin la opción `pop`, después de guardar quedarían dos listas apiladas y la flecha atrás volvería al formulario. Con `{ pop: true }`, vuelve a la `TaskList` que ya existe y le reemplaza los parámetros.
+- **`navigate` con `{ pop: true }`.** En React Navigation 7, `navigate('TaskList')` ya no vuelve a una pantalla que está más abajo en el stack: apila una nueva. Sin la opción `pop`, después de guardar quedarían dos listas apiladas y el botón atrás volvería al formulario. Con `{ pop: true }`, vuelve a la `TaskList` que ya existe y le reemplaza los parámetros.
 - **Cómo aplica la lista `newTask` y `deletedTaskId`.** La lista guarda en un estado el último valor que ya procesó (`handledNewTask` y `handledDeletedTaskId`). Cuando llega un parámetro distinto, aplica el cambio una sola vez, durante el render. No uso `useEffect` porque la regla `react-hooks/set-state-in-effect` lo marca: actualizar el estado en un efecto, como reacción a un cambio de props, genera un render de más. Es el patrón que recomienda React en [Adjusting some state when a prop changes](https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
-- **El formulario es una pantalla del stack, no un modal.** Tiene el header con "New task" y la flecha atrás, y la barra de pestañas sigue visible.
+- **El formulario es una pantalla del stack, no un modal.** Tiene el header con "New task" y el botón atrás, y la barra de pestañas sigue visible.
+- **Botón atrás propio.** El stack usa `BackButton` en `headerLeft`, igual en iOS y Android. Desde iOS 26, el botón atrás nativo va dentro de una burbuja de vidrio (Liquid Glass) que agranda el header, y React Navigation no tiene una opción estable para sacarla. Con un `headerLeft` propio y `headerLeftBackgroundVisible: false`, el tamaño y el color los define la app. Lo que se pierde en iOS es el menú que aparece al mantener apretado el botón atrás. El gesto de deslizar para volver y el botón atrás de Android siguen funcionando porque los maneja el stack.
 
 ## Pantallas
 
@@ -79,7 +81,7 @@ Es la ruta inicial del stack de la pestaña Home, así que es lo primero que se 
 
 Muestra el detalle de la tarea que recibe en `route.params.task`: título, categoría, descripción completa y fecha de creación.
 
-- Para volver a la lista se usa la flecha del header o el botón atrás de Android.
+- Para volver a la lista se usa el botón atrás del header, el botón atrás de Android o el gesto de deslizar desde el borde en iOS.
 - "Delete task" pide confirmación con un `Alert` y vuelve a la lista con el `deletedTaskId`. Si era la última tarea, aparece el estado vacío.
 
 ### TaskFormScreen
@@ -131,6 +133,7 @@ El formulario (`TaskForm`) captura título, descripción y categoría. Toda su l
 - `TextField`: `TextInput` con label, texto de ayuda y mensaje de error. Cambia el color del borde según el foco o el error, y acepta todas las props de `TextInput`.
 - `CategoryPicker`: set de botones (`TouchableOpacity`) para elegir la categoría de la tarea.
 - `Button`: botón hecho con `TouchableOpacity`, con variantes `primary`, `secondary` y `danger` (para acciones como borrar), tamaños `medium` y `small`, y estado deshabilitado.
+- `BackButton`: botón atrás del header. Es un círculo con el color de fondo de las pantallas y el `chevron-back` de `Ionicons` en naranja, del mismo tamaño que el título del header (17). Lo usan todas las pantallas del stack menos la primera.
 
 ## Sistema de estilos
 
