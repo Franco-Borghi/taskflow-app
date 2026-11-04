@@ -5,5 +5,6 @@ export type Task = {
 	title: string;
 	description: string;
 	category: TaskCategory;
+	completed: boolean;
 	createdAt: string;
 };

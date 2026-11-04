@@ -88,6 +88,7 @@ export const useTaskForm = (onSave: (task: Task) => void) => {
 			title: title.trim(),
 			description: description.trim(),
 			category,
+			completed: false,
 			createdAt: new Date().toISOString(),
 		};
 		console.log('New task:', task);

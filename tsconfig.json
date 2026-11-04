@@ -8,7 +8,8 @@
 			"@screens/*": ["./src/screens/*"],
 			"@constants/*": ["./src/constants/*"],
 			"@entities/*": ["./src/entities/*"],
-			"@navigation/*": ["./src/navigation/*"]
+			"@navigation/*": ["./src/navigation/*"],
+			"@store/*": ["./src/store/*"]
 		}
 	}
 }
