@@ -3,7 +3,7 @@ import { CategoryPicker } from '@components/CategoryPicker';
 import { TextField } from '@components/TextField';
 import { Task } from '@entities/task';
 import { useRef } from 'react';
-import { TextInput, View } from 'react-native';
+import { TextInputInstance, View } from 'react-native';
 import { styles } from './TaskForm.styles';
 import { DESCRIPTION_MIN_LENGTH, TITLE_MIN_LENGTH, useTaskForm } from './useTaskForm';
 
@@ -16,7 +16,7 @@ export const TaskForm = ({ onSave, onCancel }: Props) => {
 	const { title, description, category, setCategory, errors, hasErrors, handleChange, handleBlur, handleAddTask } =
 		useTaskForm(onSave);
 
-	const descriptionRef = useRef<TextInput>(null);
+	const descriptionRef = useRef<TextInputInstance>(null);
 
 	return (
 		<View style={styles.container}>

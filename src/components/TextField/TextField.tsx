@@ -1,14 +1,14 @@
 import { Typography } from '@components/Typography';
 import { colors } from '@constants/colors';
 import { Ref, useState } from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import { TextInput, TextInputInstance, TextInputProps, View } from 'react-native';
 import { styles } from './TextField.styles';
 
 type Props = TextInputProps & {
 	label: string;
 	error?: string;
 	helperText?: string;
-	ref?: Ref<TextInput>;
+	ref?: Ref<TextInputInstance>;
 };
 
 export const TextField = ({ label, error, helperText, ref, style, onFocus, onBlur, ...inputProps }: Props) => {

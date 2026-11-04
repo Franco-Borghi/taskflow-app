@@ -146,7 +146,7 @@ El header y la barra de pestañas usan los mismos colores, a través del tema de
 
 ## Tecnologías
 
-- Expo SDK 57
+- Expo SDK 58
 - React Native
 - TypeScript
 - React Navigation 7 (`native`, `bottom-tabs`, `native-stack` y `elements`)
