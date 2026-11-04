@@ -1,4 +1,3 @@
-import { Layout } from '@components/Layout';
 import { FlatList } from 'react-native';
 import { styles } from './ProfileScreen.styles';
 import { ComponentProps } from 'react';
@@ -34,14 +33,12 @@ const cardData: ProfileCardData[] = [
 
 export const ProfileScreen = () => {
 	return (
-		<Layout title="Profile">
-			<FlatList
-				data={cardData}
-				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => <ProfileCard {...item} />}
-				style={styles.scroll}
-				contentContainerStyle={styles.scrollContent}
-			/>
-		</Layout>
+		<FlatList
+			data={cardData}
+			keyExtractor={(item) => item.id}
+			renderItem={({ item }) => <ProfileCard {...item} />}
+			style={styles.scroll}
+			contentContainerStyle={styles.scrollContent}
+		/>
 	);
 };

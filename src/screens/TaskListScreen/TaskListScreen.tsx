@@ -1,7 +1,6 @@
 import { AddTaskModal } from '@components/AddTaskModal';
 import { Button } from '@components/Button';
 import { EmptyState } from '@components/EmptyState';
-import { Layout } from '@components/Layout';
 import { ProfileCard } from '@components/ProfileCard';
 import { TaskCard } from '@components/TaskCard';
 import { Typography } from '@components/Typography';
@@ -9,7 +8,7 @@ import { Task } from '@entities/task';
 import { TaskDetailScreen } from '@screens/TaskDetailScreen/TaskDetailScreen';
 import { useState } from 'react';
 import { FlatList, View } from 'react-native';
-import { styles } from './HomeScreen.styles';
+import { styles } from './TaskListScreen.styles';
 
 const user = {
 	name: 'Franco Borghi',
@@ -17,7 +16,7 @@ const user = {
 	image: require('@assets/images/franco-borghi.jpg'),
 };
 
-export const HomeScreen = () => {
+export const TaskListScreen = () => {
 	const [tasks, setTasks] = useState<Task[]>([]);
 	const [isAddTaskModalVisible, setIsAddTaskModalVisible] = useState(false);
 	const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -33,7 +32,7 @@ export const HomeScreen = () => {
 	};
 
 	return (
-		<Layout title={selectedTask ? 'Task detail' : 'Home'}>
+		<>
 			{selectedTask ? (
 				<TaskDetailScreen
 					task={selectedTask}
@@ -73,6 +72,6 @@ export const HomeScreen = () => {
 				onSave={handleSaveTask}
 				onCancel={() => setIsAddTaskModalVisible(false)}
 			/>
-		</Layout>
+		</>
 	);
 };
