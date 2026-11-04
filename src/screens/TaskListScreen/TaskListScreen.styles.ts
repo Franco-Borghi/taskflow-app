@@ -12,6 +12,9 @@ export const styles = StyleSheet.create({
 	header: {
 		gap: paddings.large,
 	},
+	tasksHeader: {
+		gap: paddings.medium,
+	},
 	sectionHeader: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
