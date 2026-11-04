@@ -1,26 +1,22 @@
 import { borderRadius } from '@constants/borderRadius';
+import { boxShadows } from '@constants/boxShadows';
 import { colors } from '@constants/colors';
 import { paddings } from '@constants/paddings';
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-	backdrop: {
+	container: {
 		flex: 1,
-		backgroundColor: colors.backdrop,
 	},
-	safeArea: {
-		flex: 1,
-		justifyContent: 'center',
+	scrollContent: {
 		padding: paddings.medium,
 	},
 	card: {
-		maxHeight: '100%',
-		backgroundColor: colors.surface,
-		borderRadius: borderRadius.medium,
-		overflow: 'hidden',
-	},
-	content: {
 		padding: paddings.large,
-		gap: paddings.large,
+		backgroundColor: colors.surface,
+		borderRadius: borderRadius.small,
+		borderWidth: 1,
+		borderColor: colors.primaryMuted,
+		boxShadow: boxShadows.primary,
 	},
 });
