@@ -2,11 +2,14 @@
 
 App mobile de gestión de tareas desarrollada con **React Native** y **Expo** (Managed Workflow), como proyecto final del curso de Desarrollo de Aplicaciones de Coderhouse.
 
+Los textos de la app están en inglés. Donde el enunciado pide un texto puntual en español, hay un comentario en el código que lo indica.
+
 ## Checkpoints
 
 - **Checkpoint 1: Estructura base.** Proyecto inicializado, arquitectura de carpetas y pantalla de bienvenida.
 - **Checkpoint 2: Pantallas iniciales y tarjeta de perfil.** Pantallas `HomeScreen` y `ProfileScreen`, componente reutilizable `ProfileCard` y sistema de estilos centralizado.
 - **Checkpoint 3: Formulario de creación de tareas.** Botón "+ Add" en la `HomeScreen` que abre un modal con un formulario controlado, validaciones y feedback visual. Las tareas guardadas se muestran en la lista de la Home.
+- **Checkpoint 4: Lista de tareas con detalle.** Estado vacío con el componente `EmptyState`, y pantalla `TaskDetailScreen` que se abre al tocar una tarea, con botones para volver a la lista y para borrar la tarea.
 
 ## Pantallas
 
@@ -16,9 +19,20 @@ Todas las pantallas se visualizan correctamente en Expo Go.
 
 Es la pantalla que se muestra al abrir la app (`App.tsx`). Muestra mi `ProfileCard` y la sección "My tasks" con la lista de tareas.
 
-- La lista es un `FlatList` que scrollea toda la pantalla: la `ProfileCard` y el título "My tasks" van en el `ListHeaderComponent`, y el estado vacío ("No tasks yet") en el `ListEmptyComponent`.
+- La lista es un `FlatList` que scrollea toda la pantalla: la `ProfileCard` y el título "My tasks" van en el `ListHeaderComponent`.
+- Cuando no hay tareas, el `ListEmptyComponent` muestra el `EmptyState`, que invita a crear la primera tarea. Uso `ListEmptyComponent` en vez de un ternario sobre `tasks.length` porque la `ProfileCard` y el botón "+ Add" están en el header de la lista: con un ternario desaparecerían junto con la lista y no habría forma de crear la primera tarea.
 - El botón "+ Add" abre el `AddTaskModal`. Al guardar, la tarea se agrega al principio de la lista.
+- Al tocar una tarea se abre su detalle (ver `TaskDetailScreen`).
 - Por ahora las tareas viven en un estado local (`useState`) de la `HomeScreen`, así que se pierden al cerrar la app o cambiar de pantalla.
+
+### TaskDetailScreen
+
+Muestra el detalle de una tarea: título, categoría, descripción completa y fecha de creación.
+
+- Todavía no hay React Navigation, así que la navegación es simulada: la `HomeScreen` guarda la tarea tocada en el estado `selectedTask` y, mientras tenga un valor, renderiza la `TaskDetailScreen` en lugar de la lista. El título del header cambia a "Task detail".
+- "← Back" y el botón atrás de Android (con `BackHandler`) hacen `setSelectedTask(null)` y vuelven a la lista. Como la `HomeScreen` no se desmonta, las tareas no se pierden.
+- "Delete task" pide confirmación con un `Alert`, borra la tarea y vuelve a la lista. Si era la última, aparece el estado vacío.
+- En el Módulo 5 el estado `selectedTask` se va a reemplazar por un `Stack.Navigator` de React Navigation.
 
 ### ProfileScreen
 
@@ -55,7 +69,7 @@ El formulario (`TaskForm`) captura título, descripción y categoría. Toda su l
   1. Arma la tarea (`{ id, title, description, category, createdAt }`) y la imprime en consola.
   2. La manda a la `HomeScreen`, que la agrega a la lista y cierra el modal.
   3. Limpia los campos con `resetForm`, así el formulario vuelve a su estado inicial.
-  4. Muestra el `Alert` "Éxito / Tarea capturada localmente".
+  4. Muestra el `Alert` "Success / Task saved locally".
 - **UX mobile:**
   - El título usa `autoCapitalize="sentences"` y `returnKeyType="next"`, que pasa el foco a la descripción.
   - La descripción es multilínea.
@@ -69,10 +83,12 @@ El formulario (`TaskForm`) captura título, descripción y categoría. Toda su l
 - `Typography`: textos con los tamaños y colores del tema.
 - `AddTaskModal`: modal con una tarjeta centrada que contiene el `TaskForm`. Se cierra con "Cancel", con "Save" o con el botón atrás de Android.
 - `TaskForm`: formulario de creación de tareas, con los botones "Cancel" y "Save".
-- `TaskCard`: tarjeta de una tarea en la lista, con título, categoría y descripción.
+- `TaskCard`: tarjeta de una tarea en la lista, con título, categoría y descripción. Al tocarla se abre el detalle.
+- `CategoryBadge`: etiqueta con el nombre de la categoría. La usan `TaskCard` y `TaskDetailScreen`.
+- `EmptyState`: mensaje con ícono para cuando una lista está vacía. Recibe `icon`, `title` y `message` por props.
 - `TextField`: `TextInput` con label, texto de ayuda y mensaje de error. Cambia el color del borde según el foco o el error, y acepta todas las props de `TextInput`.
 - `CategoryPicker`: set de botones (`TouchableOpacity`) para elegir la categoría de la tarea.
-- `Button`: botón hecho con `TouchableOpacity`, con variantes `primary` y `secondary`, tamaños `medium` y `small`, y estado deshabilitado.
+- `Button`: botón hecho con `TouchableOpacity`, con variantes `primary`, `secondary` y `danger` (para acciones como borrar), tamaños `medium` y `small`, y estado deshabilitado.
 
 ## Sistema de estilos
 

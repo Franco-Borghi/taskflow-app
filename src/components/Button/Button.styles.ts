@@ -18,6 +18,10 @@ export const styles = StyleSheet.create({
 		backgroundColor: colors.surface,
 		borderColor: colors.border,
 	},
+	danger: {
+		backgroundColor: colors.error,
+		borderColor: colors.error,
+	},
 	medium: {
 		paddingVertical: paddings.medium,
 		paddingHorizontal: paddings.large,

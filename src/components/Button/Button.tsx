@@ -5,7 +5,7 @@ import { styles } from './Button.styles';
 type Props = {
 	title: string;
 	onPress: () => void;
-	variant?: 'primary' | 'secondary';
+	variant?: 'primary' | 'secondary' | 'danger';
 	size?: 'medium' | 'small';
 	disabled?: boolean;
 	style?: StyleProp<ViewStyle>;
@@ -26,7 +26,7 @@ export const Button = ({ title, onPress, variant = 'primary', size = 'medium', d
 				type={size === 'small' ? 'caption' : 'body'}
 				bold
 				align="center"
-				color={variant === 'primary' ? 'surface' : 'text'}
+				color={variant === 'secondary' ? 'text' : 'surface'}
 			/>
 		</TouchableOpacity>
 	);
