@@ -3,7 +3,7 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 export type TasksStackParamList = {
 	TaskList: undefined;
 	TaskDetail: { taskId: string };
-	TaskForm: undefined;
+	TaskForm: { taskId?: string } | undefined;
 };
 
 export type RootTabParamList = {

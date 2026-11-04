@@ -68,6 +68,11 @@ export const TaskDetailScreen = () => {
 			</View>
 
 			<Button
+				title="Edit task"
+				variant="secondary"
+				onPress={() => navigation.navigate('TaskForm', { taskId: task.id })}
+			/>
+			<Button
 				title={task.completed ? 'Mark as pending' : 'Mark as completed'}
 				variant={task.completed ? 'secondary' : 'primary'}
 				onPress={() => dispatch(toggleTaskStatus(task.id))}

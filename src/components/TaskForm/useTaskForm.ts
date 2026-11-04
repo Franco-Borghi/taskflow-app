@@ -42,20 +42,13 @@ const validateForm = ({ title, description }: TaskFormValues): TaskFormErrors =>
 	description: validateDescription(description),
 });
 
-export const useTaskForm = (onSave: (input: TaskInput) => void) => {
-	const [title, setTitle] = useState('');
-	const [description, setDescription] = useState('');
-	const [category, setCategory] = useState<TaskCategory>(defaultTaskCategory);
+export const useTaskForm = (onSave: (input: TaskInput) => void, initialValues?: TaskInput) => {
+	const [title, setTitle] = useState(initialValues?.title ?? '');
+	const [description, setDescription] = useState(initialValues?.description ?? '');
+	const [category, setCategory] = useState<TaskCategory>(initialValues?.category ?? defaultTaskCategory);
 	const [errors, setErrors] = useState<TaskFormErrors>({});
 
 	const hasErrors = Object.values(errors).some(Boolean);
-
-	const resetForm = () => {
-		setTitle('');
-		setDescription('');
-		setCategory(defaultTaskCategory);
-		setErrors({});
-	};
 
 	const handleChange = (field: TaskFormField, text: string) => {
 		if (field === 'title') {
@@ -71,7 +64,7 @@ export const useTaskForm = (onSave: (input: TaskInput) => void) => {
 		setErrors((prev) => ({ ...prev, [field]: fieldError }));
 	};
 
-	const handleAddTask = () => {
+	const handleSave = () => {
 		const validationErrors = validateForm({ title, description });
 		setErrors(validationErrors);
 
@@ -84,7 +77,6 @@ export const useTaskForm = (onSave: (input: TaskInput) => void) => {
 			description: description.trim(),
 			category,
 		});
-		resetForm();
 		Alert.alert('Success', 'Task saved locally');
 	};
 
@@ -97,6 +89,6 @@ export const useTaskForm = (onSave: (input: TaskInput) => void) => {
 		hasErrors,
 		handleChange,
 		handleBlur,
-		handleAddTask,
+		handleSave,
 	};
 };

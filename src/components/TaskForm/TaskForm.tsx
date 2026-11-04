@@ -8,13 +8,14 @@ import { styles } from './TaskForm.styles';
 import { DESCRIPTION_MIN_LENGTH, TITLE_MIN_LENGTH, useTaskForm } from './useTaskForm';
 
 type Props = {
+	initialValues?: TaskInput;
 	onSave: (input: TaskInput) => void;
 	onCancel: () => void;
 };
 
-export const TaskForm = ({ onSave, onCancel }: Props) => {
-	const { title, description, category, setCategory, errors, hasErrors, handleChange, handleBlur, handleAddTask } =
-		useTaskForm(onSave);
+export const TaskForm = ({ initialValues, onSave, onCancel }: Props) => {
+	const { title, description, category, setCategory, errors, hasErrors, handleChange, handleBlur, handleSave } =
+		useTaskForm(onSave, initialValues);
 
 	const descriptionRef = useRef<TextInputInstance>(null);
 
@@ -56,7 +57,7 @@ export const TaskForm = ({ onSave, onCancel }: Props) => {
 
 			<View style={styles.actions}>
 				<Button title="Cancel" variant="secondary" onPress={onCancel} style={styles.action} />
-				<Button title="Save" onPress={handleAddTask} disabled={hasErrors} style={styles.action} />
+				<Button title="Save" onPress={handleSave} disabled={hasErrors} style={styles.action} />
 			</View>
 		</View>
 	);

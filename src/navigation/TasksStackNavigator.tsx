@@ -20,7 +20,11 @@ export const TasksStackNavigator = () => {
 		>
 			<Stack.Screen name="TaskList" component={TaskListScreen} options={{ title: 'Home' }} />
 			<Stack.Screen name="TaskDetail" component={TaskDetailScreen} options={{ title: 'Task detail' }} />
-			<Stack.Screen name="TaskForm" component={TaskFormScreen} options={{ title: 'New task' }} />
+			<Stack.Screen
+				name="TaskForm"
+				component={TaskFormScreen}
+				options={({ route }) => ({ title: route.params?.taskId ? 'Edit task' : 'New task' })}
+			/>
 		</Stack.Navigator>
 	);
 };
