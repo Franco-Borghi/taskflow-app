@@ -12,9 +12,6 @@ export const styles = StyleSheet.create({
 		padding: paddings.medium,
 		gap: paddings.medium,
 	},
-	backButton: {
-		alignSelf: 'flex-start',
-	},
 	card: {
 		padding: paddings.large,
 		gap: paddings.large,
