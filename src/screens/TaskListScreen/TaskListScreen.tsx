@@ -3,11 +3,11 @@ import { EmptyState } from '@components/EmptyState';
 import { ProfileCard } from '@components/ProfileCard';
 import { TaskCard } from '@components/TaskCard';
 import { Typography } from '@components/Typography';
-import { Task } from '@entities/task';
 import { TasksStackParamList } from '@navigation/types';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import { useAppSelector } from '@store/hooks';
+import { selectFilteredTasks } from '@store/taskSlice';
 import { FlatList, View } from 'react-native';
 import { styles } from './TaskListScreen.styles';
 
@@ -19,27 +19,7 @@ const user = {
 
 export const TaskListScreen = () => {
 	const navigation = useNavigation<NativeStackNavigationProp<TasksStackParamList, 'TaskList'>>();
-	const { params } = useRoute<RouteProp<TasksStackParamList, 'TaskList'>>();
-	const newTask = params?.newTask;
-	const deletedTaskId = params?.deletedTaskId;
-
-	const [tasks, setTasks] = useState<Task[]>([]);
-	const [handledNewTask, setHandledNewTask] = useState(newTask);
-	const [handledDeletedTaskId, setHandledDeletedTaskId] = useState(deletedTaskId);
-
-	if (newTask !== handledNewTask) {
-		setHandledNewTask(newTask);
-		if (newTask) {
-			setTasks((prev) => [newTask, ...prev]);
-		}
-	}
-
-	if (deletedTaskId !== handledDeletedTaskId) {
-		setHandledDeletedTaskId(deletedTaskId);
-		if (deletedTaskId) {
-			setTasks((prev) => prev.filter((task) => task.id !== deletedTaskId));
-		}
-	}
+	const tasks = useAppSelector(selectFilteredTasks);
 
 	return (
 		<FlatList

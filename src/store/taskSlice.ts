@@ -1,6 +1,7 @@
 import { defaultTaskFilter, TaskFilter } from '@constants/taskFilters';
 import { Task } from '@entities/task';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
+import type { RootState } from './store';
 
 type TasksState = {
 	items: Task[];
@@ -54,3 +55,15 @@ const taskSlice = createSlice({
 });
 
 export const tasksReducer = taskSlice.reducer;
+
+export const selectTasks = (state: RootState) => state.tasks.items;
+
+export const selectTaskFilter = (state: RootState) => state.tasks.filter;
+
+export const selectFilteredTasks = createSelector([selectTasks, selectTaskFilter], (tasks, filter) => {
+	if (filter === 'all') {
+		return tasks;
+	}
+
+	return tasks.filter((task) => task.completed === (filter === 'completed'));
+});
