@@ -7,7 +7,9 @@
 			"@components/*": ["./src/components/*"],
 			"@screens/*": ["./src/screens/*"],
 			"@constants/*": ["./src/constants/*"],
-			"@entities/*": ["./src/entities/*"]
+			"@entities/*": ["./src/entities/*"],
+			"@navigation/*": ["./src/navigation/*"],
+			"@context/*": ["./src/context/*"]
 		}
 	}
 }
