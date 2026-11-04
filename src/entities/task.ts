@@ -5,5 +5,5 @@ export type Task = {
 	title: string;
 	description: string;
 	category: TaskCategory;
-	createdAt: Date;
+	createdAt: string;
 };

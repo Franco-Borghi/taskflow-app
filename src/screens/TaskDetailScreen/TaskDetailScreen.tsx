@@ -22,7 +22,7 @@ export const TaskDetailScreen = ({ task, onBack, onDelete }: Props) => {
 		return () => subscription.remove();
 	}, [onBack]);
 
-	const createdAt = task.createdAt.toLocaleString('en-US', {
+	const createdAt = new Date(task.createdAt).toLocaleString('en-US', {
 		day: 'numeric',
 		month: 'long',
 		year: 'numeric',
