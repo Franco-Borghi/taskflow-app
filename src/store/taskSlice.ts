@@ -1,6 +1,6 @@
 import { defaultTaskFilter, TaskFilter } from '@constants/taskFilters';
-import { Task } from '@entities/task';
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { Task, TaskInput } from '@entities/task';
+import { createSelector, createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 
 type TasksState = {
@@ -51,8 +51,24 @@ const initialState: TasksState = {
 const taskSlice = createSlice({
 	name: 'tasks',
 	initialState,
-	reducers: {},
+	reducers: {
+		addTask: {
+			reducer: (state, action: PayloadAction<Task>) => {
+				state.items.unshift(action.payload);
+			},
+			prepare: (input: TaskInput) => ({
+				payload: {
+					...input,
+					id: nanoid(),
+					completed: false,
+					createdAt: new Date().toISOString(),
+				},
+			}),
+		},
+	},
 });
+
+export const { addTask } = taskSlice.actions;
 
 export const tasksReducer = taskSlice.reducer;
 

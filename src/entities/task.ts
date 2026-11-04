@@ -8,3 +8,5 @@ export type Task = {
 	completed: boolean;
 	createdAt: string;
 };
+
+export type TaskInput = Pick<Task, 'title' | 'description' | 'category'>;

@@ -1,14 +1,14 @@
 import { Button } from '@components/Button';
 import { CategoryPicker } from '@components/CategoryPicker';
 import { TextField } from '@components/TextField';
-import { Task } from '@entities/task';
+import { TaskInput } from '@entities/task';
 import { useRef } from 'react';
 import { TextInputInstance, View } from 'react-native';
 import { styles } from './TaskForm.styles';
 import { DESCRIPTION_MIN_LENGTH, TITLE_MIN_LENGTH, useTaskForm } from './useTaskForm';
 
 type Props = {
-	onSave: (task: Task) => void;
+	onSave: (input: TaskInput) => void;
 	onCancel: () => void;
 };
 

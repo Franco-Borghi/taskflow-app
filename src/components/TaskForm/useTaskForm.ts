@@ -1,5 +1,5 @@
 import { defaultTaskCategory, TaskCategory } from '@constants/taskCategories';
-import { Task } from '@entities/task';
+import { TaskInput } from '@entities/task';
 import { useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -44,7 +44,7 @@ const validateForm = ({ title, description }: TaskFormValues): TaskFormErrors =>
 	description: validateDescription(description),
 });
 
-export const useTaskForm = (onSave: (task: Task) => void) => {
+export const useTaskForm = (onSave: (input: TaskInput) => void) => {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [category, setCategory] = useState<TaskCategory>(defaultTaskCategory);
@@ -83,16 +83,11 @@ export const useTaskForm = (onSave: (task: Task) => void) => {
 			return;
 		}
 
-		const task: Task = {
-			id: Date.now().toString(),
+		onSave({
 			title: title.trim(),
 			description: description.trim(),
 			category,
-			completed: false,
-			createdAt: new Date().toISOString(),
-		};
-		console.log('New task:', task);
-		onSave(task);
+		});
 		resetForm();
 		// Written in English instead of "Éxito" / "Tarea capturada localmente" (as the Module 3 brief asks)
 		// to match the rest of the app.
