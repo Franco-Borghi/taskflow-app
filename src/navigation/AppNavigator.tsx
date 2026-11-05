@@ -3,6 +3,10 @@ import { colors } from '@constants/colors';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DefaultTheme, NavigationContainer, Theme } from '@react-navigation/native';
 import { ProfileScreen } from '@screens/ProfileScreen/ProfileScreen';
+import { subscribeToAuthChanges } from '@services/authService';
+import { authStateChanged } from '@store/authSlice';
+import { useAppDispatch } from '@store/hooks';
+import { useEffect } from 'react';
 import { headerOptions } from './headerOptions';
 import { TasksStackNavigator } from './TasksStackNavigator';
 import { RootTabParamList } from './types';
@@ -22,6 +26,10 @@ const theme: Theme = {
 };
 
 export const AppNavigator = () => {
+	const dispatch = useAppDispatch();
+
+	useEffect(() => subscribeToAuthChanges((user) => dispatch(authStateChanged(user))), [dispatch]);
+
 	return (
 		<NavigationContainer theme={theme}>
 			<Tab.Navigator
