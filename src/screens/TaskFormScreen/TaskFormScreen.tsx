@@ -6,8 +6,10 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { addTask, selectTaskById, updateTask } from '@store/taskSlice';
-import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import { styles } from './TaskFormScreen.styles';
+
+const showSaveError = (message: string) => Alert.alert('Could not save the task', message);
 
 export const TaskFormScreen = () => {
 	const navigation = useNavigation<NativeStackNavigationProp<TasksStackParamList, 'TaskForm'>>();
@@ -18,10 +20,12 @@ export const TaskFormScreen = () => {
 
 	const handleSave = (input: TaskInput) => {
 		if (taskToEdit) {
-			dispatch(updateTask({ id: taskToEdit.id, changes: input }));
+			dispatch(updateTask({ id: taskToEdit.id, changes: input }))
+				.unwrap()
+				.catch(showSaveError);
 			navigation.goBack();
 		} else {
-			dispatch(addTask(input));
+			dispatch(addTask(input)).unwrap().catch(showSaveError);
 			navigation.navigate('TaskList', undefined, { pop: true });
 		}
 	};

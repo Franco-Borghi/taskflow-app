@@ -1,5 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors } from '@constants/colors';
+import { useTasksSubscription } from '@hooks/useTasksSubscription';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ProfileScreen } from '@screens/ProfileScreen/ProfileScreen';
 import { headerOptions } from './headerOptions';
@@ -9,6 +10,8 @@ import { RootTabParamList } from './types';
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export const MainTabNavigator = () => {
+	useTasksSubscription();
+
 	return (
 		<Tab.Navigator
 			initialRouteName="Home"

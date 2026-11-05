@@ -34,7 +34,9 @@ export const TaskDetailScreen = () => {
 				text: 'Delete',
 				style: 'destructive',
 				onPress: () => {
-					dispatch(deleteTask(task.id));
+					dispatch(deleteTask(task.id))
+						.unwrap()
+						.catch((message: string) => Alert.alert('Could not delete the task', message));
 					navigation.goBack();
 				},
 			},
@@ -75,7 +77,11 @@ export const TaskDetailScreen = () => {
 			<Button
 				title={task.completed ? 'Mark as pending' : 'Mark as completed'}
 				variant={task.completed ? 'secondary' : 'primary'}
-				onPress={() => dispatch(toggleTaskStatus(task.id))}
+				onPress={() =>
+					dispatch(toggleTaskStatus(task.id))
+						.unwrap()
+						.catch((message: string) => Alert.alert('Could not update the task', message))
+				}
 			/>
 			<Button title="Delete task" variant="danger" onPress={handleDelete} />
 		</ScrollView>

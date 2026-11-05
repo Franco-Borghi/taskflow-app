@@ -20,4 +20,7 @@ export const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 	},
+	loader: {
+		paddingVertical: paddings.large,
+	},
 });
