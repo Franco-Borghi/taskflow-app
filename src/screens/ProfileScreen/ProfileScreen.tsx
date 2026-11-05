@@ -1,17 +1,15 @@
-import { FlatList } from 'react-native';
-import { styles } from './ProfileScreen.styles';
-import { ComponentProps } from 'react';
+import { Button } from '@components/Button';
 import { ProfileCard } from '@components/ProfileCard';
+import { Typography } from '@components/Typography';
+import { selectAuthUser, selectIsAuthSubmitting, signOut } from '@store/authSlice';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { ComponentProps } from 'react';
+import { Alert, FlatList, View } from 'react-native';
+import { styles } from './ProfileScreen.styles';
 
-type ProfileCardData = ComponentProps<typeof ProfileCard> & { id: string };
+type TeamMember = ComponentProps<typeof ProfileCard> & { id: string };
 
-const cardData: ProfileCardData[] = [
-	{
-		id: '0',
-		name: 'Franco Borghi',
-		role: 'React Native Developer',
-		image: require('@assets/images/franco-borghi.jpg'),
-	},
+const teamMembers: TeamMember[] = [
 	{ id: '1', name: 'Lucía Fernández', role: 'Product Manager', image: { uri: 'https://i.pravatar.cc/150?img=1' } },
 	{ id: '2', name: 'Martín González', role: 'Frontend Developer', image: { uri: 'https://i.pravatar.cc/150?img=12' } },
 	{ id: '3', name: 'Sofía Martínez', role: 'UX/UI Designer', image: { uri: 'https://i.pravatar.cc/150?img=5' } },
@@ -32,11 +30,39 @@ const cardData: ProfileCardData[] = [
 ];
 
 export const ProfileScreen = () => {
+	const dispatch = useAppDispatch();
+	const user = useAppSelector(selectAuthUser);
+	const isSubmitting = useAppSelector(selectIsAuthSubmitting);
+
+	const handleSignOut = () => {
+		Alert.alert('Sign out', 'Do you want to sign out of TaskFlow?', [
+			{ text: 'Cancel', style: 'cancel' },
+			{
+				text: 'Sign out',
+				style: 'destructive',
+				onPress: () => {
+					dispatch(signOut())
+						.unwrap()
+						.catch(() => Alert.alert('Sign out failed', 'Something went wrong. Please try again.'));
+				},
+			},
+		]);
+	};
+
 	return (
 		<FlatList
-			data={cardData}
+			data={teamMembers}
 			keyExtractor={(item) => item.id}
 			renderItem={({ item }) => <ProfileCard {...item} />}
+			ListHeaderComponent={
+				<View style={styles.header}>
+					<View style={styles.section}>
+						<ProfileCard name={user?.displayName || user?.email || ''} role={user?.email ?? ''} />
+						<Button title="Sign out" variant="secondary" onPress={handleSignOut} disabled={isSubmitting} />
+					</View>
+					<Typography text="Team" type="h3" bold />
+				</View>
+			}
 			style={styles.scroll}
 			contentContainerStyle={styles.scrollContent}
 		/>

@@ -21,4 +21,13 @@ export const styles = StyleSheet.create({
 		aspectRatio: 1,
 		borderRadius: borderRadius.rounded,
 	},
+	avatarPlaceholder: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: colors.background,
+	},
+	info: {
+		flex: 1,
+		justifyContent: 'center',
+	},
 });

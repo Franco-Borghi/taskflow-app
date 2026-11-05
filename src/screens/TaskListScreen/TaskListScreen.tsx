@@ -8,16 +8,11 @@ import { TaskFilter } from '@constants/taskFilters';
 import { TasksStackParamList } from '@navigation/types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { selectAuthUser } from '@store/authSlice';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { selectFilteredTasks, selectTaskFilter, setFilter, toggleTaskStatus } from '@store/taskSlice';
 import { FlatList, View } from 'react-native';
 import { styles } from './TaskListScreen.styles';
-
-const user = {
-	name: 'Franco Borghi',
-	role: 'React Native Developer',
-	image: require('@assets/images/franco-borghi.jpg'),
-};
 
 const emptyStates: Record<TaskFilter, { icon: string; title: string; message: string }> = {
 	all: {
@@ -39,6 +34,7 @@ const emptyStates: Record<TaskFilter, { icon: string; title: string; message: st
 
 export const TaskListScreen = () => {
 	const navigation = useNavigation<NativeStackNavigationProp<TasksStackParamList, 'TaskList'>>();
+	const user = useAppSelector(selectAuthUser);
 	const tasks = useAppSelector(selectFilteredTasks);
 	const filter = useAppSelector(selectTaskFilter);
 	const dispatch = useAppDispatch();
@@ -56,7 +52,7 @@ export const TaskListScreen = () => {
 			)}
 			ListHeaderComponent={
 				<View style={styles.header}>
-					<ProfileCard {...user} />
+					<ProfileCard name={user?.displayName || user?.email || ''} role={user?.email ?? ''} />
 					<View style={styles.tasksHeader}>
 						<View style={styles.sectionHeader}>
 							<Typography text="My tasks" type="h3" bold />

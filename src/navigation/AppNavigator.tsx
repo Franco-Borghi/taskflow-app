@@ -1,17 +1,12 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { FullScreenLoader } from '@components/FullScreenLoader';
 import { colors } from '@constants/colors';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DefaultTheme, NavigationContainer, Theme } from '@react-navigation/native';
-import { ProfileScreen } from '@screens/ProfileScreen/ProfileScreen';
 import { subscribeToAuthChanges } from '@services/authService';
-import { authStateChanged } from '@store/authSlice';
-import { useAppDispatch } from '@store/hooks';
+import { authStateChanged, selectAuthStatus } from '@store/authSlice';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { useEffect } from 'react';
-import { headerOptions } from './headerOptions';
-import { TasksStackNavigator } from './TasksStackNavigator';
-import { RootTabParamList } from './types';
-
-const Tab = createBottomTabNavigator<RootTabParamList>();
+import { AuthStackNavigator } from './AuthStackNavigator';
+import { MainTabNavigator } from './MainTabNavigator';
 
 const theme: Theme = {
 	...DefaultTheme,
@@ -27,39 +22,17 @@ const theme: Theme = {
 
 export const AppNavigator = () => {
 	const dispatch = useAppDispatch();
+	const authStatus = useAppSelector(selectAuthStatus);
 
 	useEffect(() => subscribeToAuthChanges((user) => dispatch(authStateChanged(user))), [dispatch]);
 
+	if (authStatus === 'checking') {
+		return <FullScreenLoader />;
+	}
+
 	return (
 		<NavigationContainer theme={theme}>
-			<Tab.Navigator
-				initialRouteName="Home"
-				screenOptions={{
-					...headerOptions,
-					tabBarActiveTintColor: colors.primary,
-					tabBarInactiveTintColor: colors.textMuted,
-				}}
-			>
-				<Tab.Screen
-					name="Home"
-					component={TasksStackNavigator}
-					options={{
-						headerShown: false,
-						tabBarIcon: ({ focused, color, size }) => (
-							<Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />
-						),
-					}}
-				/>
-				<Tab.Screen
-					name="Profile"
-					component={ProfileScreen}
-					options={{
-						tabBarIcon: ({ focused, color, size }) => (
-							<Ionicons name={focused ? 'person' : 'person-outline'} color={color} size={size} />
-						),
-					}}
-				/>
-			</Tab.Navigator>
+			{authStatus === 'authenticated' ? <MainTabNavigator /> : <AuthStackNavigator />}
 		</NavigationContainer>
 	);
 };

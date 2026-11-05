@@ -9,4 +9,11 @@ export const styles = StyleSheet.create({
 		gap: paddings.small,
 		padding: paddings.medium,
 	},
+	header: {
+		gap: paddings.large,
+		paddingBottom: paddings.small,
+	},
+	section: {
+		gap: paddings.medium,
+	},
 });
