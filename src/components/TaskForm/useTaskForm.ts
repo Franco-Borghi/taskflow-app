@@ -77,7 +77,7 @@ export const useTaskForm = (onSave: (input: TaskInput) => void, initialValues?: 
 			description: description.trim(),
 			category,
 		});
-		Alert.alert('Success', 'Task saved locally');
+		Alert.alert('Success', 'Task saved');
 	};
 
 	return {
